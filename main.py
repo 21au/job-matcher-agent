@@ -45,7 +45,12 @@ def run_pipeline():
     # 3. Ambil semua lowongan yang belum pernah di-match dengan CV ini
     print("\n[2] Mengecek lowongan yang belum diproses...")
     unprocessed = get_unprocessed_jobs(cv["id"])
-    print(f"Lowongan yang perlu dianalisis: {len(unprocessed)}")
+    MAX_JOBS_PER_RUN = 15  # batasi biar nggak kena rate limit Groq
+    if len(unprocessed) > MAX_JOBS_PER_RUN:
+        print(f"Ada {len(unprocessed)} lowongan baru, diproses {MAX_JOBS_PER_RUN} dulu (sisanya di run berikutnya)")
+        unprocessed = unprocessed[:MAX_JOBS_PER_RUN]
+    else:
+        print(f"Lowongan yang perlu dianalisis: {len(unprocessed)}")
     
     if not unprocessed:
         print("Tidak ada lowongan baru untuk dianalisis. Selesai.")
