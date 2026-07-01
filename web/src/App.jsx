@@ -4,6 +4,7 @@ import { Search, Loader2 } from 'lucide-react'
 import { supabase } from './supabaseClient'
 import JobCard from './components/JobCard'
 import StatsBar from './components/StatsBar'
+import UploadCV from './components/UploadCV'
 
 function App() {
   const [matches, setMatches] = useState([])
@@ -76,7 +77,8 @@ function App() {
 
       <div className="max-w-6xl mx-auto px-4 py-10">
         {!loading && <StatsBar totalJobs={matches.length} avgScore={avgScore} highMatches={highMatches} />}
-
+      <UploadCV />
+        {!loading && <StatsBar totalJobs={matches.length} avgScore={avgScore} highMatches={highMatches} />}
         <div className="flex flex-col sm:flex-row gap-3 mb-8">
           <div className="relative flex-1">
             <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
