@@ -1,0 +1,58 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #0B0E14;
+  --color-panel: #131824;
+  --color-panel2: #182036;
+  --color-line: #232B3A;
+  --color-signal: #E8A33D;
+  --color-signal2: #F2C14E;
+  --color-cyanx: #5EC8D8;
+  --color-alert: #D9634A;
+  --color-muted: #8B95A7;
+
+  --font-display: "Space Grotesk", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+}
+
+@layer base {
+  body {
+    @apply bg-ink text-white font-body;
+    background-image:
+      radial-gradient(circle at 15% 10%, rgba(232,163,61,0.06), transparent 40%),
+      radial-gradient(circle at 85% 90%, rgba(94,200,216,0.05), transparent 40%);
+    background-attachment: fixed;
+  }
+
+  ::selection {
+    background-color: rgba(232,163,61,0.3);
+  }
+
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: #0B0E14; }
+  ::-webkit-scrollbar-thumb { background: #232B3A; border-radius: 4px; }
+
+  *:focus-visible {
+    outline: 2px solid #E8A33D;
+    outline-offset: 2px;
+  }
+}
+
+.dot-grid {
+  background-image: radial-gradient(rgba(232,163,61,0.15) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+@keyframes scan-sweep {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.scan-line {
+  animation: scan-sweep 4.5s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scan-line { animation: none; }
+}
