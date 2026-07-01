@@ -37,7 +37,7 @@ export default function UploadCV() {
 
   return (
     <div className="bg-panel/50 border border-line rounded-xl p-6 mb-10">
-      <h2 className="font-display text-xl font-semibold text-white mb-1">Coba Sistem Ini</h2>
+      <h2 className="font-display text-xl font-semibold text-white mb-1">Upload CV, Dapatkan Rekomendasi</h2>
       <p className="text-muted text-sm mb-5">
         Upload CV kamu (PDF) untuk melihat rekomendasi lowongan secara langsung.
       </p>
