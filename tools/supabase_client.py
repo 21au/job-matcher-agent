@@ -108,7 +108,23 @@ def get_latest_cv() -> dict | None:
     """
     result = supabase.table("cvs").select("*").order("created_at", desc=True).limit(1).execute()
     return result.data[0] if result.data else None
+def get_all_cvs() -> list[dict]:
+    """
+    Ambil semua CV yang tersimpan, urutan dari yang terbaru.
+    
+    Returns:
+        list of dict, masing-masing berisi id, name, created_at, dll
+    """
+    result = supabase.table("cvs").select("*").order("created_at", desc=True).execute()
+    return result.data or []
 
+
+def get_cv_by_id(cv_id: int) -> dict | None:
+    """
+    Ambil 1 CV spesifik berdasarkan ID.
+    """
+    result = supabase.table("cvs").select("*").eq("id", cv_id).limit(1).execute()
+    return result.data[0] if result.data else None
 
 def save_match_result(cv_id: int, job_id: int, matcher_result: dict) -> dict | None:
     """

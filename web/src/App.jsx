@@ -11,6 +11,8 @@ function App() {
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [sortBy, setSortBy] = useState('score')
+  const [minScore, setMinScore] = useState(0)
+  const [sourceFilter, setSourceFilter] = useState('all')
 
   useEffect(() => {
     fetchMatches()
@@ -31,10 +33,14 @@ function App() {
     setLoading(false)
   }
 
+  const uniqueSources = [...new Set(matches.map(m => m.job_postings?.source).filter(Boolean))]
+
   const filteredMatches = matches
     .filter(m =>
-      m.job_postings?.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      m.job_postings?.company?.toLowerCase().includes(searchTerm.toLowerCase())
+      (m.job_postings?.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+       m.job_postings?.company?.toLowerCase().includes(searchTerm.toLowerCase())) &&
+      m.score >= minScore &&
+      (sourceFilter === 'all' || m.job_postings?.source === sourceFilter)
     )
     .sort((a, b) => sortBy === 'score' ? b.score - a.score : new Date(b.created_at) - new Date(a.created_at))
 
@@ -76,9 +82,10 @@ function App() {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 py-10">
+        <UploadCV />
+
         {!loading && <StatsBar totalJobs={matches.length} avgScore={avgScore} highMatches={highMatches} />}
-      <UploadCV />
-        {!loading && <StatsBar totalJobs={matches.length} avgScore={avgScore} highMatches={highMatches} />}
+
         <div className="flex flex-col sm:flex-row gap-3 mb-8">
           <div className="relative flex-1">
             <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
@@ -90,6 +97,29 @@ function App() {
               className="w-full bg-panel/50 border border-line rounded-md pl-9 pr-4 py-2.5 text-sm font-mono placeholder:text-muted focus:outline-none focus:border-signal/50 transition-colors"
             />
           </div>
+
+          <select
+            value={minScore}
+            onChange={(e) => setMinScore(Number(e.target.value))}
+            className="bg-panel/50 border border-line rounded-md px-4 py-2.5 text-sm font-mono focus:outline-none focus:border-signal/50 transition-colors"
+          >
+            <option value={0}>Semua skor</option>
+            <option value={60}>Skor ≥ 60</option>
+            <option value={70}>Skor ≥ 70</option>
+            <option value={80}>Skor ≥ 80</option>
+          </select>
+
+          <select
+            value={sourceFilter}
+            onChange={(e) => setSourceFilter(e.target.value)}
+            className="bg-panel/50 border border-line rounded-md px-4 py-2.5 text-sm font-mono focus:outline-none focus:border-signal/50 transition-colors"
+          >
+            <option value="all">Semua sumber</option>
+            {uniqueSources.map((src) => (
+              <option key={src} value={src}>{src}</option>
+            ))}
+          </select>
+
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
