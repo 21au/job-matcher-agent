@@ -1,4 +1,7 @@
 import feedparser
+from tools.logger import setup_logger
+
+logger = setup_logger("rss_fetcher")
 
 RSS_SOURCES = {
     "remoteok": "https://remoteok.com/remote-dev-jobs.rss",
@@ -47,11 +50,11 @@ def fetch_jobs_from_rss(source_name: str) -> list[dict]:
     try:
         feed = feedparser.parse(feed_url)
     except Exception as e:
-        print(f"[{source_name}] Gagal konek ke feed: {e}")
+        logger.error(f"[{source_name}] Gagal konek ke feed: {e}")
         return []
     
     if feed.bozo:
-        print(f"[{source_name}] Peringatan: feed mungkin rusak/tidak valid, tetap dicoba diproses")
+        logger.warning(f"[{source_name}] Peringatan: feed mungkin rusak/tidak valid, tetap dicoba diproses")
     
     if not feed.entries:
         print(f"[{source_name}] Feed kosong atau tidak ada lowongan")
