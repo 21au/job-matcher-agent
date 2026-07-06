@@ -71,21 +71,29 @@ def match_cv_to_job(cv_data: dict, job: dict) -> dict:
 def match_cv_to_multiple_jobs(cv_data: dict, jobs: list[dict]) -> list[dict]:
     """
     Bandingkan 1 CV dengan banyak lowongan sekaligus.
-    
-    Args:
-        cv_data: dict CV
-        jobs: list of dict lowongan
-    
-    Returns:
-        list of dict, masing-masing berisi job info + hasil matching
+    Kalau 1 lowongan gagal diproses, lowongan lain tetap lanjut.
     """
     results = []
+    failed_count = 0
+    
     for job in jobs:
         print(f"Matching: {job.get('title')}...")
-        match_result = match_cv_to_job(cv_data, job)
-        if match_result:
-            results.append({
-                "job": job,
-                "match": match_result
-            })
+        try:
+            match_result = match_cv_to_job(cv_data, job)
+            if match_result and "score" in match_result:
+                results.append({
+                    "job": job,
+                    "match": match_result
+                })
+            else:
+                print(f"  -> Hasil kosong/tidak valid, di-skip")
+                failed_count += 1
+        except Exception as e:
+            print(f"  -> Gagal: {e}, di-skip")
+            failed_count += 1
+            continue
+    
+    if failed_count > 0:
+        print(f"\nTotal {failed_count} lowongan gagal diproses dan di-skip")
+    
     return results

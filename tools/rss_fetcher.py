@@ -43,19 +43,36 @@ def fetch_jobs_from_rss(source_name: str) -> list[dict]:
         raise ValueError(f"Sumber '{source_name}' tidak dikenal. Pilihan: {list(RSS_SOURCES.keys())}")
     
     feed_url = RSS_SOURCES[source_name]
-    feed = feedparser.parse(feed_url)
+    
+    try:
+        feed = feedparser.parse(feed_url)
+    except Exception as e:
+        print(f"[{source_name}] Gagal konek ke feed: {e}")
+        return []
+    
+    if feed.bozo:
+        print(f"[{source_name}] Peringatan: feed mungkin rusak/tidak valid, tetap dicoba diproses")
+    
+    if not feed.entries:
+        print(f"[{source_name}] Feed kosong atau tidak ada lowongan")
+        return []
     
     jobs = []
     for entry in feed.entries:
-        company, title = extract_company_and_title(entry)
-        job = {
-            "source": source_name,
-            "title": title,
-            "company": company,
-            "description": entry.get("summary", ""),
-            "url": entry.get("link", ""),
-        }
-        jobs.append(job)
+        try:
+            company, title = extract_company_and_title(entry)
+            job = {
+                "source": source_name,
+                "title": title,
+                "company": company,
+                "description": entry.get("summary", ""),
+                "url": entry.get("link", ""),
+            }
+            if job["url"]:  # skip kalau nggak ada URL sama sekali
+                jobs.append(job)
+        except Exception as e:
+            print(f"[{source_name}] Skip 1 entry karena error: {e}")
+            continue
     
     return jobs
 

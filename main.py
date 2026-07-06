@@ -73,9 +73,12 @@ def run_pipeline():
 
     print("\n[2] Memproses setiap CV...")
     for cv in cvs:
-        process_cv(cv)
-
-    print("\n=== SELESAI ===")
+        try:
+            process_cv(cv)
+        except Exception as e:
+            print(f"GAGAL memproses CV '{cv.get('name')}': {e}")
+            print("Lanjut ke CV berikutnya...")
+            continue
 
 
 if __name__ == "__main__":
